@@ -1,6 +1,6 @@
 # poc-spotify-api
 
-Fluxo:
+## Fluxo
 
 1. Usuário clica em um link `https://example.com/{linkId}`; o browser carrega um
    SPA que a princípio não mostra nada (ou só um spinner)
@@ -19,10 +19,16 @@ Fluxo:
    - se o dado informado está correto, backend retorna um accessToken e as
      instruções para a próxima tela.
 
-4. Usuário preenche os dados da tela atual, SPA envia para
+4. Usuário preenche os dados da tela atual, SPA envia com o accessToken para
    `PUT /checkout/{stepId}`
 
    - o `stepId` é o id informado no objeto de instruções da tela, junto com o
      título e os campos
 
 5. Repete o passo 4 até chegar no fim.
+
+## Referências:
+
+- [The Brilliance of Spotify Internal APIs to Mitigate Payments (artigo)](https://nordicapis.com/the-brilliance-of-spotify-internal-apis-to-mitigate-payments/)
+- [How Spotify Payments Creates APIs to Manage Complexity (video)](https://www.youtube.com/watch?v=1nz6muMNXF4)
+- [How Spotify Payments Creates APIs to Manage Complexity (slides)](https://www.slideshare.net/nordicapis/how-spotify-payments-creates-apis-to-manage-complexity-horia-jurcut)
