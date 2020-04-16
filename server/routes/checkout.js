@@ -5,24 +5,36 @@ const router = express.Router()
 
 const STEPS = {
   start: {
+    stepId: 'start',
     title: 'Checkout',
     fields: ['cpf', 'email'],
-    next: 'cadastro',
+    button: 'Continuar',
   },
   cadastro: {
+    stepId: 'cadastro',
     title: 'Cadastro',
     fields: ['name', 'cpf', 'phone', 'birthDate'],
-    next: 'pagamento',
+    button: 'Continuar',
   },
   pagamento: {
+    stepId: 'pagamento',
     title: 'Pagamento',
     fields: ['cardNumber', 'cardHolder', 'expirationDate', 'cvv'],
-    next: 'resumo',
+    button: 'Continuar',
   },
-  resumo: {
+  finalize: {
+    stepId: 'finalize',
     title: 'Resumo',
-    next: 'finalize',
+    info: '{informações de resumo do pagamento}',
+    button: 'Finalizar',
   },
+}
+
+const NEXT_STEP = {
+  start: 'cadastro',
+  cadastro: 'pagamento',
+  pagamento: 'resumo',
+  resumo: 'finalize',
 }
 
 router.get('/:linkId', async (req, res, next) => {
@@ -41,7 +53,7 @@ router.get('/:linkId', async (req, res, next) => {
   }
 })
 
-router.put('/step/start', async (req, res, next) => {
+router.put('/start', async (req, res, next) => {
   try {
     const {
       linkId,
@@ -51,7 +63,7 @@ router.put('/step/start', async (req, res, next) => {
     // TODO: busca dados do link
     // TODO: valida cpf/email fornecido e retorna 401 se for incorreto
 
-    const nextStep = STEPS.start.next
+    const nextStep = NEXT_STEP.start
 
     const responseBody = {
       acessToken: uuidv4(),
@@ -64,7 +76,7 @@ router.put('/step/start', async (req, res, next) => {
   }
 })
 
-router.put('/step/:step', async (req, res, next) => {
+router.put('/:step', async (req, res, next) => {
   try {
     const { step } = req.params
     const { linkId, accessToken, data } = req.body
@@ -72,23 +84,17 @@ router.put('/step/:step', async (req, res, next) => {
     // TODO: valida linkId/accessToken
     // TODO: valida e salva os dados informados
 
-    const nextStep = STEPS[step].next
+    const nextStep = NEXT_STEP[step]
+    if (nextStep === 'finalize') {
+      // TODO: finaliza o pagamento
+      return res.sendStatus(200)
+    }
 
     const responseBody = {
       step: STEPS[nextStep],
     }
 
     res.json(responseBody)
-  } catch (err) {
-    next(err)
-  }
-})
-
-router.put('/finalize', async (req, res, next) => {
-  try {
-    // ...
-
-    res.sendStatus(200)
   } catch (err) {
     next(err)
   }
